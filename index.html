@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy 17th Birthday!</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --font-main: 'Times New Roman', Times, serif;
+            --overlay-bg: rgba(255, 255, 255, 0.85);
+            --cake-color-1: #f3e5ab; 
+            --cake-color-2: #cd853f; 
+            --plate-color: #bdc3c7; 
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: var(--font-main);
+            /* Menggunakan bg1.jpg untuk semua slide */
+            background: url('bg1.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            text-align: center;
+            background: var(--overlay-bg);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 85%;
+            width: 400px;
+            backdrop-filter: blur(5px);
+            position: relative;
+        }
+
+        .hidden { display: none !important; }
+
+        #countdown { font-size: 4rem; color: #d35400; margin: 20px 0; font-weight: bold; }
+        .box { width: 120px; height: 120px; background: #e67e22; margin: 30px auto; cursor: pointer; border: 4px solid #d35400; display: flex; justify-content: center; align-items: center; font-size: 4rem; color: white; animation: shake 0.5s infinite; }
+        @keyframes shake { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(5deg); } 75% { transform: rotate(-5deg); } }
+
+        /* Cake Styles */
+        .cake-container { position: relative; width: 160px; height: 180px; margin: 30px auto 0; }
+        .plate { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 180px; height: 20px; background: var(--plate-color); border-radius: 50%; z-index: 1; }
+        .cake-tier { position: absolute; left: 50%; transform: translateX(-50%); background: var(--cake-color-1); border-radius: 15px 15px 0 0; z-index: 2; }
+        .tier-bottom { bottom: 15px; width: 140px; height: 70px; box-shadow: inset 0 -15px 0 var(--cake-color-2); }
+        .tier-top { bottom: 80px; width: 100px; height: 50px; box-shadow: inset 0 -10px 0 var(--cake-color-2); }
+        .candle { width: 12px; height: 50px; background: repeating-linear-gradient(-45deg, #e74c3c, #e74c3c 5px, #fff 5px, #fff 10px); position: absolute; top: 32px; left: 50%; transform: translateX(-50%); border-radius: 3px; z-index: 3; }
+        .flame { width: 16px; height: 24px; background: radial-gradient(#fff, #f39c12 50%, #e74c3c); border-radius: 50% 50% 35% 35%; position: absolute; top: -26px; left: -2px; box-shadow: 0 0 15px orange; animation: flicker 0.15s infinite alternate; }
+        @keyframes flicker { 0% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.1) rotate(-2deg); opacity: 1; } }
+
+        .nav-btn { background: #d35400; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 10px 5px; font-weight: bold; }
+        .envelope-container { margin: 20px 0; cursor: pointer; }
+        .envelope { font-size: 4rem; }
+        .letter { background: #fff; padding: 15px; border: 1px solid #ddd; margin: 15px 0; font-style: italic; text-align: justify; font-size: 0.95rem; }
+        .playlist { margin-top: 25px; text-align: left; border-top: 1px solid #ccc; padding-top: 15px; }
+        audio { width: 100%; height: 35px; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="step-1">
+            <h2>Get Ready...</h2>
+            <div id="countdown">5</div>
+        </div>
+
+        <div id="step-2" class="hidden">
+            <h2>I have something for you</h2>
+            <div class="box" onclick="nextStep(3);">?</div>
+            <p>Click the box to see what's inside!</p>
+            <button class="nav-btn" onclick="prevStep(1)">Back</button>
+        </div>
+
+        <div id="step-3" class="hidden">
+            <h1 style="color: #c0392b;">Happy 17th Birthday :D</h1>
+            <p id="mic-status">Blow into your mic to blow out the candle!</p>
+            <div class="cake-container">
+                <div class="plate"></div>
+                <div class="cake-tier tier-bottom"></div>
+                <div class="cake-tier tier-top"></div>
+                <div class="candle"><div class="flame" id="flame"></div></div>
+            </div>
+            <div id="post-blow-nav" class="hidden" style="margin-top: 20px;">
+                <p>Candle out! Let's see the message...</p>
+                <button class="nav-btn" onclick="nextStep(4)">See Message & Songs</button>
+            </div>
+            <button class="nav-btn" onclick="prevStep(2)">Back</button>
+        </div>
+
+        <div id="step-4" class="hidden">
+            <div class="envelope-container" onclick="toggleLetter()">
+                <div class="envelope">📩</div>
+                <div style="color: #d35400; font-weight: bold;">I have a message for you!</div>
+            </div>
+            <div id="letter-content" class="hidden letter">
+                Barakallah fii umrik Abbas !! Wishing you a day full of laughter, love, and everything you've been hoping for! I hope the universe will give you all the good and genuine things that you deserve :>
+            </div>
+            <div class="playlist">
+                <h4 style="text-align: center;">Birthday Playlist 🎶</h4>
+                <div class="track">Cigarette Daydreams<audio class="track-audio" controls src="song1.mp3"></audio></div>
+                <div class="track">Golden Brown<audio class="track-audio" controls src="song2.mp3"></audio></div>
+                <div class="track">Forever Young<audio class="track-audio" controls src="song3.mp3"></audio></div>
+            </div>
+            <button class="nav-btn" onclick="prevStep(3)">Back to Cake</button>
+        </div>
+    </div>
+
+    <audio id="bday-music" src="bday.mp3" loop></audio>
+    <audio id="yay-sound" src="yay.mp3"></audio>
+
+    <script>
+        let timeLeft = 5;
+        const bdayMusic = document.getElementById('bday-music');
+        const yaySound = document.getElementById('yay-sound');
+
+        const timer = setInterval(() => {
+            timeLeft--;
+            document.getElementById('countdown').innerText = timeLeft;
+            if (timeLeft <= 0) { clearInterval(timer); nextStep(2); }
+        }, 1000);
+
+        function nextStep(step) {
+            document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
+            document.getElementById('step-' + step).classList.remove('hidden');
+            if (step === 3) { bdayMusic.play(); startMicDetection(); }
+        }
+
+        function prevStep(step) {
+            if (step === 1) location.reload();
+            document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
+            document.getElementById('step-' + step).classList.remove('hidden');
+            if (step === 2) { bdayMusic.pause(); bdayMusic.currentTime = 0; }
+        }
+
+        function toggleLetter() { document.getElementById('letter-content').classList.toggle('hidden'); }
+
+        async function startMicDetection() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const ctx = new AudioContext();
+                const analyzer = ctx.createAnalyser();
+                ctx.createMediaStreamSource(stream).connect(analyzer);
+                analyzer.fftSize = 256;
+                const arr = new Uint8Array(analyzer.frequencyBinCount);
+                function detect() {
+                    analyzer.getByteFrequencyData(arr);
+                    let sum = 0; for(let i=0; i<arr.length; i++) sum += arr[i];
+                    if ((sum/arr.length) > 55) blowOut(); else requestAnimationFrame(detect);
+                }
+                detect();
+            } catch(e) { document.getElementById('flame').onclick = blowOut; }
+        }
+
+        function blowOut() {
+            if (!document.getElementById('flame').classList.contains('hidden')) {
+                document.getElementById('flame').classList.add('hidden');
+                bdayMusic.pause(); yaySound.play();
+                confetti({ particleCount: 150, spread: 70 });
+                document.getElementById('post-blow-nav').classList.remove('hidden');
+            }
+        }
+        document.querySelectorAll('.track-audio').forEach(a => a.onplay = () => document.querySelectorAll('.track-audio').forEach(o => { if(o !== a) o.pause(); }));
+    </script>
+</body>
+</html>
